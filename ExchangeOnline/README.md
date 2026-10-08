@@ -61,3 +61,46 @@ C:\Temp\Contoso_EXO-EWS_20261008_113734\
 ### Reference
 
 [Microsoft: Migrate to Microsoft 365 Cross-Tenant Access Policies](https://learn.microsoft.com/en-us/exchange/sharing/migrate-to-m365-xtap)
+
+---
+
+## Test-M365SmtpRelay.ps1
+
+Anonymous SMTP/25 diagnostic for a Microsoft 365 MX endpoint. Its modes **Plain**, **StartTls**, and **Both** run independently. STARTTLS reports the negotiated TLS protocol and, where available on the local .NET runtime, the cipher suite.
+
+### Requirements
+
+- Windows PowerShell 5.1 or PowerShell 7; outbound TCP/25.
+- `Resolve-DnsName` for MX discovery or an explicitly specified `-SmtpServer`.
+- No Microsoft 365 admin privileges; test sender and recipient must be authorized.
+
+### Examples
+
+```powershell
+# Original test: sends one message without TLS.
+.\ExchangeOnline\Test-M365SmtpRelay.ps1
+
+# TLS handshake only (NO email sent).
+.\ExchangeOnline\Test-M365SmtpRelay.ps1 -Mode StartTls -Sender 'scanner@contoso.com'
+
+# Send one plaintext message and test TLS in a second connection.
+.\ExchangeOnline\Test-M365SmtpRelay.ps1 -Mode Both -Sender 'scanner@contoso.com' -Recipient 'test@example.net'
+
+# Send a test message AFTER STARTTLS negotiation.
+.\ExchangeOnline\Test-M365SmtpRelay.ps1 -Mode StartTls -SendAfterTls -Sender 'scanner@contoso.com' -Recipient 'test@example.net'
+
+Get-Help .\ExchangeOnline\Test-M365SmtpRelay.ps1 -Full
+```
+
+Use `-SmtpServer` if the domain's external MX is a third-party filtering provider; supply a *verified* Microsoft 365 hostname.
+
+### Read results carefully
+
+- **TLS details are from the test computer, NOT the printer.** A successful workstation STARTTLS handshake does not prove that printer firmware supports the same protocol/cipher. Check device settings, firmware, logs or a device-side capture for that.
+- A successful message submission to an *internal* recipient may be Direct Send. It does not prove connector-based relay to external addresses; test with an authorized external recipient and corroborate with message trace and connector settings.
+- Sending uses the source IP of the workstation's connection, which can differ from the printer's egress IP.
+- `Plain` sends an unencrypted SMTP message; `StartTls` does not send until explicitly requested with `-SendAfterTls`. `Both -SendAfterTls` sends two test messages.
+- The script uses standard certificate and hostname validation for STARTTLS, does not authenticate, and does not verify final delivery.
+- This script was **not independently tested against a live Exchange Online SMTP endpoint** as part of this PR. GitHub Actions only validates syntax, help, and static issues.
+
+Microsoft: [How to set up a multifunction device to send email using Microsoft 365](https://learn.microsoft.com/en-us/exchange/mail-flow-best-practices/how-to-set-up-a-multifunction-device-or-application-to-send-email-using-microsoft-365-or-office-365).
