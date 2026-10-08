@@ -8,7 +8,8 @@ A curated collection of reusable PowerShell tools for Microsoft 365, Exchange On
 
 | Category | Script | Purpose | Impact |
 | --- | --- | --- | --- |
-| Exchange Online | [Get-EXOEwsInventory.ps1](ExchangeOnline/Get-EXOEwsInventory.ps1) | Inventory Exchange Online organization relationships, availability address spaces, calendar sharing policies, mailbox policy usage, and EWS settings. | Read-only tenant access; creates local reports. |
+| Exchange Online | [Get-EXOEwsInventory.ps1](ExchangeOnline/Get-EXOEwsInventory.ps1) | Inventory Exchange Online organization relationships and EWS settings. | Read-only tenant access; creates local reports. |
+| Exchange Online | [Test-M365SmtpRelay.ps1](ExchangeOnline/Test-M365SmtpRelay.ps1) | Test SMTP submission, STARTTLS, negotiated TLS protocol and cipher. | Plain mode sends a real test email; STARTTLS defaults to handshake-only. |
 
 For requirements, commands, expected output and limitations, see the [Exchange Online documentation](ExchangeOnline/README.md).
 
