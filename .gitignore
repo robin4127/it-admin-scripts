@@ -1,0 +1,15 @@
+# Customer reports and local operational output
+*.csv
+*.log
+*.clixml
+*.xml.tmp
+*.zip
+*EXO-EWS_*/
+reports/
+output/
+
+# Editor and OS artifacts
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
